@@ -3,6 +3,7 @@ package storage
 import (
 	"backend/internal/models"
 	"encoding/json"
+	"log"
 	"os"
 	"sync"
 )
@@ -15,6 +16,24 @@ var (
 // Инициализация хранилища
 func InitStorage(path string) {
 	filePath = path
+	if err := clearFile(); err != nil {
+		log.Printf("Не удалось очистить файл: %v", err)
+	}
+}
+
+func clearFile() error {
+	mu.Lock()
+	defer mu.Unlock()
+
+	// Открываем файл и очищаем его содержимое
+	file, err := os.Create(filePath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	// Записываем пустые данные в файл
+	return nil
 }
 
 // Сохранить данные
